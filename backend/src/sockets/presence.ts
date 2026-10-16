@@ -1,7 +1,4 @@
 // src/sockets/presence.ts
-// In-memory presence tracking. For a single Node process only.
-// If you scale to multiple servers later, move this to Redis.
-
 const onlineUsers = new Map<string, Set<string>>();
 
 export function addSocket(userId: string, socketId: string) {
