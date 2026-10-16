@@ -352,12 +352,25 @@ export function registerChatSocket(io: Server) {
         }
 
         // Unhide the conversation for everyone (they might have deleted it).
-        await pool.query(
-          `UPDATE conversation_members
-           SET deleted_at = NULL
-           WHERE conversation_id = $1`,
-          [payload.conversationId]
-        );
+        // await pool.query(
+        //   `UPDATE conversation_members
+        //    SET deleted_at = NULL
+        //    WHERE conversation_id = $1`,
+        //   [payload.conversationId]
+        // );
+        // Un-delete for everyone (but keep hidden chats hidden).
+await pool.query(
+  `UPDATE conversation_members
+   SET deleted_at = NULL
+   WHERE conversation_id = $1`,
+  [payload.conversationId]
+);
+
+// Fetch sender's display info for the message payload.
+const senderInfo = await pool.query(
+  `SELECT display_name, avatar_url FROM users WHERE id = $1`,
+  [user.id]
+);
 
         const result = await pool.query(
           `INSERT INTO messages (conversation_id, sender_id, content)
@@ -366,10 +379,17 @@ export function registerChatSocket(io: Server) {
           [payload.conversationId, user.id, content]
         );
 
+        // const message = {
+        //   ...result.rows[0],
+        //   sender_username: user.username,
+        // };
+
         const message = {
-          ...result.rows[0],
-          sender_username: user.username,
-        };
+  ...result.rows[0],
+  sender_username: user.username,
+  sender_display_name: senderInfo.rows[0]?.display_name ?? null,
+  sender_avatar_url: senderInfo.rows[0]?.avatar_url ?? null,
+};
 
         const room = `conversation:${payload.conversationId}`;
 

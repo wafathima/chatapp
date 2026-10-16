@@ -10,6 +10,8 @@ import pool from "./config/db.js";
 import authRoutes from "./routes/auth.routes.js";
 import chatRoutes from "./routes/chat.routes.js";
 import { registerChatSocket } from "./sockets/chat.socket.js";
+import userRoutes from "./routes/user.routes.js";
+
 
 const app = express();
 const httpServer = createServer(app);
@@ -63,6 +65,8 @@ app.get("/health/db", async (_req, res) => {
 // API routes
 app.use("/api/auth", authRoutes);
 app.use("/api/chat", chatRoutes);
+app.use("/api/user", userRoutes);
+
 
 // Create ONE Socket.IO server
 const io = new Server(httpServer, {
