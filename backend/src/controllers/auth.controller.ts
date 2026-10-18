@@ -105,12 +105,19 @@ export async function logout(
       await deleteSession(token);
     }
 
+    // res.clearCookie("session", {
+    //   httpOnly: true,
+    //   secure: isProduction,
+    //   sameSite: "lax",
+    //   path: "/",
+    // });
+
     res.clearCookie("session", {
-      httpOnly: true,
-      secure: isProduction,
-      sameSite: "lax",
-      path: "/",
-    });
+  httpOnly: true,
+  secure: isProduction,
+  sameSite: isProduction ? "none" : "lax",
+  path: "/",
+});
 
     res.json({ message: "Logged out successfully" });
   } catch (error) {
