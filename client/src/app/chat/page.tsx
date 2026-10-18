@@ -485,16 +485,43 @@ export default function ChatPage() {
         open={pinModal !== null}
         title={pinModal?.kind === "verify" ? "Enter your PIN" : "Set a new PIN"}
         onClose={() => setPinModal(null)}
-        onSubmit={async (pin) => {
-          if (pinModal?.kind === "verify") {
-            const res = await apiRequest<{ ok: boolean }>("/api/user/me/pin/check", { method: "POST", body: { pin } });
-            if (!res.ok) { setError("Wrong PIN"); return; }
-          } else {
-            await apiRequest("/api/user/me/pin", { method: "POST", body: { pin } });
-          }
-          pinModal.onDone();
-          setPinModal(null);
-        }}
+        // onSubmit={async (pin) => {
+        //   if (pinModal?.kind === "verify") {
+        //     const res = await apiRequest<{ ok: boolean }>("/api/user/me/pin/check", { method: "POST", body: { pin } });
+        //     if (!res.ok) { setError("Wrong PIN"); return; }
+        //   } else {
+        //     await apiRequest("/api/user/me/pin", { method: "POST", body: { pin } });
+        //   }
+        //   pinModal.onDone();
+        //   setPinModal(null);
+        
+onSubmit={async (pin) => {
+  const modal = pinModal;
+
+  if (!modal) return;
+
+  if (modal.kind === "verify") {
+    const res = await apiRequest<{ ok: boolean }>(
+      "/api/user/me/pin/check",
+      { method: "POST", body: { pin } }
+    );
+
+    if (!res.ok) {
+      setError("Wrong PIN");
+      return;
+    }
+  } else {
+    await apiRequest("/api/user/me/pin", {
+      method: "POST",
+      body: { pin },
+    });
+  }
+
+  modal.onDone();
+  setPinModal(null);
+}}
+
+        
       />
 
       <aside className="flex w-72 shrink-0 flex-col border-r-4 border-[#2B0B0B] bg-[#FFD93B] sm:w-80">

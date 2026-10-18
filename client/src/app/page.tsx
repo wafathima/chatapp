@@ -243,8 +243,17 @@ function Mascot({ className = "" }: { className?: string }) {
 /* ------------------------------------------------------------------ */
 /*  Page                                                               */
 /* ------------------------------------------------------------------ */
+// export default function HomePage() {
+//   const d = display.className;
+
 export default function HomePage() {
   const d = display.className;
+
+  const [year, setYear] = useState<number | null>(null);
+
+  useEffect(() => {
+    setYear(new Date().getFullYear());
+  }, []);
 
   const [messages, setMessages] = useState<Msg[]>([
     { id: 1, from: "them", text: "yo did u see the cat?? 🐱" },
@@ -736,7 +745,7 @@ export default function HomePage() {
         <footer className="border-t-4 border-[#2B0B0B] bg-[#2B0B0B] px-5 py-8 text-[#FFD93B] lg:px-10">
           <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 sm:flex-row">
             <p className={`${d} text-2xl tracking-wide`}>
-              © {new Date().getFullYear()} EnChat. Made with 🔥 and way too much pizza.
+              © {year ?? ""} EnChat. Made with 🔥 and way too much pizza.
             </p>
             <div className="flex gap-6 text-lg font-semibold">
               <Link href="/login" className="transition hover:text-white">
