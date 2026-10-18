@@ -89,13 +89,81 @@ export async function createConversation(
   }
 }
 
+// export async function messages(
+//   req: Request,
+//   res: Response,
+//   next: NextFunction
+// ) {
+//   try {
+//     const results = await getMessages(req.authUser!.id, req.params.id);
+//     res.json({ messages: results });
+//   } catch (error) {
+//     handleError(error, res, next);
+//   }
+// }
+
+// export async function removeConversation(
+//   req: Request,
+//   res: Response,
+//   next: NextFunction
+// ) {
+//   try {
+//     await deleteConversation(req.authUser!.id, req.params.id);
+//     res.json({ message: "Conversation deleted" });
+//   } catch (error) {
+//     handleError(error, res, next);
+//   }
+// }
+
+// // ---------- Feature 1 ----------
+// export async function archiveConversationController(
+//   req: Request,
+//   res: Response,
+//   next: NextFunction
+// ) {
+//   try {
+//     const archived = req.body?.archived !== false; // default true
+//     await archiveConversation(req.authUser!.id, req.params.id, archived);
+//     res.json({ message: archived ? "Archived" : "Unarchived" });
+//   } catch (error) {
+//     handleError(error, res, next);
+//   }
+// }
+
+// // ---------- Feature 2 ----------
+// export async function hideConversationController(
+//   req: Request,
+//   res: Response,
+//   next: NextFunction
+// ) {
+//   try {
+//     const hidden = req.body?.hidden !== false; // default true
+//     await setConversationHidden(req.authUser!.id, req.params.id, hidden);
+//     res.json({ message: hidden ? "Hidden" : "Unhidden" });
+//   } catch (error) {
+//     handleError(error, res, next);
+//   }
+// }
+
+
 export async function messages(
   req: Request,
   res: Response,
   next: NextFunction
 ) {
   try {
-    const results = await getMessages(req.authUser!.id, req.params.id);
+    const conversationId = req.params.id;
+
+    if (typeof conversationId !== "string") {
+      res.status(400).json({ message: "Invalid conversation ID" });
+      return;
+    }
+
+    const results = await getMessages(
+      req.authUser!.id,
+      conversationId
+    );
+
     res.json({ messages: results });
   } catch (error) {
     handleError(error, res, next);
@@ -108,7 +176,18 @@ export async function removeConversation(
   next: NextFunction
 ) {
   try {
-    await deleteConversation(req.authUser!.id, req.params.id);
+    const conversationId = req.params.id;
+
+    if (typeof conversationId !== "string") {
+      res.status(400).json({ message: "Invalid conversation ID" });
+      return;
+    }
+
+    await deleteConversation(
+      req.authUser!.id,
+      conversationId
+    );
+
     res.json({ message: "Conversation deleted" });
   } catch (error) {
     handleError(error, res, next);
@@ -122,8 +201,21 @@ export async function archiveConversationController(
   next: NextFunction
 ) {
   try {
-    const archived = req.body?.archived !== false; // default true
-    await archiveConversation(req.authUser!.id, req.params.id, archived);
+    const conversationId = req.params.id;
+
+    if (typeof conversationId !== "string") {
+      res.status(400).json({ message: "Invalid conversation ID" });
+      return;
+    }
+
+    const archived = req.body?.archived !== false;
+
+    await archiveConversation(
+      req.authUser!.id,
+      conversationId,
+      archived
+    );
+
     res.json({ message: archived ? "Archived" : "Unarchived" });
   } catch (error) {
     handleError(error, res, next);
@@ -137,8 +229,21 @@ export async function hideConversationController(
   next: NextFunction
 ) {
   try {
-    const hidden = req.body?.hidden !== false; // default true
-    await setConversationHidden(req.authUser!.id, req.params.id, hidden);
+    const conversationId = req.params.id;
+
+    if (typeof conversationId !== "string") {
+      res.status(400).json({ message: "Invalid conversation ID" });
+      return;
+    }
+
+    const hidden = req.body?.hidden !== false;
+
+    await setConversationHidden(
+      req.authUser!.id,
+      conversationId,
+      hidden
+    );
+
     res.json({ message: hidden ? "Hidden" : "Unhidden" });
   } catch (error) {
     handleError(error, res, next);

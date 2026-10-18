@@ -54,9 +54,66 @@ export async function createConversation(req, res, next) {
         handleError(error, res, next);
     }
 }
+// export async function messages(
+//   req: Request,
+//   res: Response,
+//   next: NextFunction
+// ) {
+//   try {
+//     const results = await getMessages(req.authUser!.id, req.params.id);
+//     res.json({ messages: results });
+//   } catch (error) {
+//     handleError(error, res, next);
+//   }
+// }
+// export async function removeConversation(
+//   req: Request,
+//   res: Response,
+//   next: NextFunction
+// ) {
+//   try {
+//     await deleteConversation(req.authUser!.id, req.params.id);
+//     res.json({ message: "Conversation deleted" });
+//   } catch (error) {
+//     handleError(error, res, next);
+//   }
+// }
+// // ---------- Feature 1 ----------
+// export async function archiveConversationController(
+//   req: Request,
+//   res: Response,
+//   next: NextFunction
+// ) {
+//   try {
+//     const archived = req.body?.archived !== false; // default true
+//     await archiveConversation(req.authUser!.id, req.params.id, archived);
+//     res.json({ message: archived ? "Archived" : "Unarchived" });
+//   } catch (error) {
+//     handleError(error, res, next);
+//   }
+// }
+// // ---------- Feature 2 ----------
+// export async function hideConversationController(
+//   req: Request,
+//   res: Response,
+//   next: NextFunction
+// ) {
+//   try {
+//     const hidden = req.body?.hidden !== false; // default true
+//     await setConversationHidden(req.authUser!.id, req.params.id, hidden);
+//     res.json({ message: hidden ? "Hidden" : "Unhidden" });
+//   } catch (error) {
+//     handleError(error, res, next);
+//   }
+// }
 export async function messages(req, res, next) {
     try {
-        const results = await getMessages(req.authUser.id, req.params.id);
+        const conversationId = req.params.id;
+        if (typeof conversationId !== "string") {
+            res.status(400).json({ message: "Invalid conversation ID" });
+            return;
+        }
+        const results = await getMessages(req.authUser.id, conversationId);
         res.json({ messages: results });
     }
     catch (error) {
@@ -65,7 +122,12 @@ export async function messages(req, res, next) {
 }
 export async function removeConversation(req, res, next) {
     try {
-        await deleteConversation(req.authUser.id, req.params.id);
+        const conversationId = req.params.id;
+        if (typeof conversationId !== "string") {
+            res.status(400).json({ message: "Invalid conversation ID" });
+            return;
+        }
+        await deleteConversation(req.authUser.id, conversationId);
         res.json({ message: "Conversation deleted" });
     }
     catch (error) {
@@ -75,8 +137,13 @@ export async function removeConversation(req, res, next) {
 // ---------- Feature 1 ----------
 export async function archiveConversationController(req, res, next) {
     try {
-        const archived = req.body?.archived !== false; // default true
-        await archiveConversation(req.authUser.id, req.params.id, archived);
+        const conversationId = req.params.id;
+        if (typeof conversationId !== "string") {
+            res.status(400).json({ message: "Invalid conversation ID" });
+            return;
+        }
+        const archived = req.body?.archived !== false;
+        await archiveConversation(req.authUser.id, conversationId, archived);
         res.json({ message: archived ? "Archived" : "Unarchived" });
     }
     catch (error) {
@@ -86,8 +153,13 @@ export async function archiveConversationController(req, res, next) {
 // ---------- Feature 2 ----------
 export async function hideConversationController(req, res, next) {
     try {
-        const hidden = req.body?.hidden !== false; // default true
-        await setConversationHidden(req.authUser.id, req.params.id, hidden);
+        const conversationId = req.params.id;
+        if (typeof conversationId !== "string") {
+            res.status(400).json({ message: "Invalid conversation ID" });
+            return;
+        }
+        const hidden = req.body?.hidden !== false;
+        await setConversationHidden(req.authUser.id, conversationId, hidden);
         res.json({ message: hidden ? "Hidden" : "Unhidden" });
     }
     catch (error) {
